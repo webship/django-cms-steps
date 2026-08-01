@@ -1,0 +1,56 @@
+{
+  "name": "@webship/django-cms-steps",
+  "version": "2.0.0",
+  "description": "Custom webship-js step definitions for testing django CMS sites (admin login, the CMS toolbar, toolbar navigation, and the page tree).",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "tests/step-definitions",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "BROWSER=chromium cucumber-js --config cucumber.js",
+    "test:chromium": "BROWSER=chromium cucumber-js --config cucumber.js",
+    "test:firefox": "BROWSER=firefox cucumber-js --config cucumber.js",
+    "test:webkit": "BROWSER=webkit cucumber-js --config cucumber.js",
+    "report": "generate-reports"
+  },
+  "keywords": [
+    "webship-js",
+    "django",
+    "django-cms",
+    "cucumber",
+    "playwright",
+    "bdd",
+    "testing",
+    "step-definitions"
+  ],
+  "author": "Webship.co",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webship/django-cms-steps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webship/django-cms-steps/issues"
+  },
+  "homepage": "https://github.com/webship/django-cms-steps#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">= 20.0"
+  },
+  "peerDependencies": {
+    "webship-js": "^2.0.4"
+  },
+  "devDependencies": {
+    "webship-js": "^2.0.4",
+    "ts-node": "^10",
+    "typescript": "~5.4.0"
+  },
+  "overrides": {
+    "@cucumber/cucumber": "^12"
+  }
+}
