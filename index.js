@@ -17,7 +17,7 @@ const path = require('path');
 
 const STEP_DEFINITIONS_GLOB = path.join(
   'node_modules',
-  '@webship/django-cms-steps',
+  '@webship-js/django-cms-steps',
   'tests',
   'step-definitions',
   '*.steps.js'

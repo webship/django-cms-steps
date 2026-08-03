@@ -5,7 +5,7 @@ for testing [django CMS](https://www.django-cms.org/) sites: Django admin
 login/logout, the CMS toolbar, toolbar navigation (including the sideframe
 overlay), and the page tree.
 
-`@webship/django-cms-steps` is a **plugin** for webship-js — it does not replace it. It
+`@webship-js/django-cms-steps` is a **plugin** for webship-js — it does not replace it. It
 ships one file, `tests/step-definitions/django-cms.steps.js`, of extra `Given`/`When`/`Then`
 steps that you load alongside webship-js's own step library in your project's
 `cucumber.js`. There is no `custom.js`; every step this package provides
@@ -14,11 +14,11 @@ lives in `django-cms.steps.js`.
 ## Install
 
 ```bash
-npm install --save-dev webship-js @webship/django-cms-steps
+npm install --save-dev webship-js @webship-js/django-cms-steps
 ```
 
 Both packages are devDependencies of your test project. `webship-js` is a
-peer dependency of `@webship/django-cms-steps`.
+peer dependency of `@webship-js/django-cms-steps`.
 
 ## Quick start
 
@@ -32,7 +32,7 @@ module.exports = {
     requireModule: ['ts-node/register'],
     require: [
       'node_modules/webship-js/tests/step-definitions/**/*.js',
-      'node_modules/@webship/django-cms-steps/tests/step-definitions/*.steps.js',
+      'node_modules/@webship-js/django-cms-steps/tests/step-definitions/*.steps.js',
       'tests/step-definitions/**/*.js', // your own project-specific steps, if any
     ],
     paths: ['tests/features/**/*.feature'],
