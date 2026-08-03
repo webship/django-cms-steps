@@ -5,3 +5,4 @@ npm-debug.log*
 /screenshots/
 /tests/reports/*
 !/tests/reports/README.md
+package-lock.json
