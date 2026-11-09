@@ -3,7 +3,7 @@ Feature: Welcome screen on a fresh install
   and its own script sends an anonymous visitor to the login form instead.
 
   Scenario: A signed-in user sees the welcome screen before any page exists
-    Given I am a logged in user with the username "admin"
+    Given I am a logged in user with the "admin" user
     When I am on the homepage
     Then I should see the django CMS welcome screen
 

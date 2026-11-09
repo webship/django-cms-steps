@@ -1,7 +1,7 @@
 Feature: CMS toolbar navigation
 
   Background:
-    Given I am a logged in user with the username "admin"
+    Given I am a logged in user with the "admin" user
 
   Scenario: Admin opens the Pages admin from the toolbar menu
     When I click "Pages" in the CMS toolbar menu

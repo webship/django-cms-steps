@@ -39,7 +39,7 @@ module.exports = {
     paths: ['tests/features/**/*.feature'],
     worldParameters: {
       launchUrl: process.env.LAUNCH_URL || 'http://localhost',
-      // Accounts for "a logged in user with the username "<key>"". Keep the
+      // Accounts for "a logged in user with the "<key>" user". Keep the
       // password out of the repo: read it from an environment variable.
       users: {
         admin: {
@@ -58,7 +58,7 @@ Then write a feature using the new steps:
 Feature: CMS toolbar
 
   Scenario: Admin sees the CMS toolbar and opens the page tree
-    Given I am a logged in user with the username "admin"
+    Given I am a logged in user with the "admin" user
     Then I should see the CMS toolbar
     When I click "Pages" in the CMS toolbar menu
     Then the CMS sideframe should be showing "/admin/cms/pagecontent/"
@@ -72,19 +72,29 @@ npx cucumber-js --config cucumber.js
 
 | Step | Type |
 | --- | --- |
-| `I am a logged in user with the username "<key>"` (reads `worldParameters.users`) | Given |
+| `I am a logged in user with the "<key>" user` (reads `worldParameters.users`) | Given |
 | `I am not logged in` (clears cookies and storage, asserts the admin login form) | Given |
 | `I log out` | When |
-| `I should see the CMS toolbar` / `I should not see the CMS toolbar` | Then |
+| `I should( not) see the CMS toolbar` | Then |
 | `I click "<label>" in the CMS toolbar menu` | When |
-| `the CMS sideframe should be showing "<url part>"` | Then |
-| `I am on the django CMS page tree` | Given |
-| `I should see the page tree` | Then |
-| `I should see "<title>" in the page tree` | Then |
-| `I should see the django CMS welcome screen` | Then |
+| `the CMS sideframe should( not) be showing "<url part>"` | Then |
+| `I am on the page tree` | Given |
+| `I should( not) see the page tree` | Then |
+| `I should( not) see "<title>" in the page tree` | Then |
+| `I should( not) see the welcome screen` | Then |
 
-Every step's regex and Gherkin examples are in the JSDoc block above it in
-[`tests/step-definitions/django-cms.steps.js`](tests/step-definitions/django-cms.steps.js).
+The product word is optional in every sentence: "the CMS toolbar", "the
+django CMS toolbar" and "the toolbar" all match, so a feature written for
+another pack reads here too. Every Then step takes `should` or `should not`,
+every When/Then step takes `I`, `we` or no pronoun, and every failure is a
+friendly message with a hint (no Playwright stack). Assertions wait on their
+locator for the `minWaitTime.page` budget (at least 10 s) instead of reading
+the page once.
+
+Every step's regex and five Gherkin examples are in the JSDoc block above it in
+[`tests/step-definitions/django-cms.steps.js`](tests/step-definitions/django-cms.steps.js);
+`npm run test:examples` checks that each example matches its own step (and no
+webship-js core step) and that every feature step is defined exactly once.
 
 ## Testing this package itself
 
