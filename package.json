@@ -1,6 +1,6 @@
 {
   "name": "@webship-js/django-cms-steps",
-  "version": "2.0.0-alpha1",
+  "version": "2.0.0-beta1",
   "description": "Custom webship-js step definitions for testing django CMS sites (admin login, the CMS toolbar, toolbar navigation, and the page tree).",
   "main": "index.js",
   "files": [
