@@ -1,0 +1,11 @@
+node_modules/
+npm-debug.log*
+
+# webship-js run artifacts
+/screenshots/
+/tests/reports/*
+!/tests/reports/README.md
+package-lock.json
+
+# Local DDEV build of the django CMS site the suite runs against (CI generates the same in the runner).
+site/
