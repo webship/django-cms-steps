@@ -194,6 +194,9 @@ jobs:
           echo "LAUNCH_URL=$URL" >> "$GITHUB_ENV"
           npx wait-on -i 5000 -t 300000 "$URL"
 
+      - name: Check the JSDoc examples and feature steps against the step regexes
+        run: npm run test:examples
+
       - name: Run the django-cms-steps test suite
         env:
           DJANGOCMS_ADMIN_USER: admin
