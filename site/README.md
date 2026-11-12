@@ -1,9 +1,10 @@
 # The test site
 
 A real django CMS site for this suite, built with DDEV from the django CMS
-quickstart (`djangocms <name>`): django CMS 5.1 on Django 5.2 with
-djangocms-versioning, djangocms-alias, djangocms-text, djangocms-frontend and
-django-filer, on SQLite. CI builds the same site on every push.
+quickstart (`djangocms <name>`): django CMS 5.1 with djangocms-versioning,
+djangocms-alias, djangocms-text, djangocms-frontend and django-filer, on
+SQLite. The Django version follows the Python of the DDEV image (Django 5.2
+on Python 3.11, Django 6.1 on newer). CI builds the same site on every push.
 
 | Path | What it is |
 | --- | --- |
