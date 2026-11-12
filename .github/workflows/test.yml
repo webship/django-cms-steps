@@ -9,9 +9,9 @@ on:
 
 jobs:
   test:
-    name: Cucumber (webship-js) against a live django CMS site (ddev)
+    name: Cucumber (webship-js) against a real django CMS site (DDEV)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout django-cms-steps
@@ -28,182 +28,47 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Install ddev
-        uses: ddev/github-action-setup-ddev@v1
-        with:
-          # This action auto-runs `ddev start` right after installing the
-          # binary (autostart: true by default) — before the next step gets
-          # a chance to generate .ddev/config.yaml, since it always expects
-          # one to already exist (typical for testing a ddev add-on, which
-          # this repo is not). Disable it; we start ddev ourselves below.
-          autostart: 'false'
-
-      - name: Generate a throwaway ddev project that builds a live django CMS site
-        # This package doesn't bundle a demo site (no .ddev/ is committed to
-        # the repo) — it's a webship-js plugin meant to test *your*
-        # django-cms site. CI still wants something real to run the suite
-        # against on every push/PR, so it generates an ephemeral ddev
-        # project here, entirely inside the runner, and throws it away when
-        # the job ends.
-        #
-        # ddev has no built-in django/Python project type, so this uses the
-        # `generic` type: the web-build Dockerfile adds python3-venv/pip/
-        # build tools to the web image, start-djangocms.sh (run via
-        # web_extra_daemons) provisions django-cms and runs the dev server,
-        # and nginx-site.conf proxies the ddev router through to it on
-        # plain HTTP.
-        #
-        # The site is scaffolded with `django-admin startproject` followed
-        # by `python -m cms .` — django-cms's own bundled installer
-        # (`django-cms>=5`) — not the separate `djangocms-installer`
-        # PyPI package. That package is unmaintained for current Python:
-        # it imports `distutils`, removed in Python 3.12+, so it cannot run
-        # at all on the Python versions this workflow (and the step
-        # definitions' target sites) actually use. The bundled installer's
-        # output is also what the step definitions in
-        # tests/step-definitions/django-cms.steps.js are written against:
-        # a single, unprefixed language, with no "/en/" (or other language
-        # code) segment in admin/toolbar URLs.
-        run: |
-          mkdir -p .ddev/web-build .ddev/nginx_full .ddev/scripts
-
-          cat > .ddev/config.yaml <<'YAML'
-          name: django-cms-steps-ci
-          type: generic
-          docroot: ""
-          php_version: "8.3"
-          webserver_type: nginx-fpm
-          web_extra_daemons:
-            - name: "djangocms"
-              command: "bash /var/www/html/.ddev/scripts/start-djangocms.sh"
-              directory: /var/www/html
-          web_environment: []
-          YAML
-
-          cat > .ddev/web-build/Dockerfile <<'DOCKERFILE'
-          RUN apt-get update \
-              && apt-get install -y --no-install-recommends python3-venv python3-pip python3-dev build-essential \
-              && rm -rf /var/lib/apt/lists/*
-          DOCKERFILE
-
-          cat > .ddev/nginx_full/nginx-site.conf <<'NGINX'
-          server {
-              listen 80 default_server;
-              listen 443 ssl default_server;
-              server_name $hostname;
-
-              ssl_certificate /etc/ssl/certs/master.crt;
-              ssl_certificate_key /etc/ssl/certs/master.key;
-
-              include /etc/nginx/monitoring.conf;
-
-              location / {
-                  proxy_pass http://127.0.0.1:8000;
-                  proxy_http_version 1.1;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                  proxy_set_header Upgrade $http_upgrade;
-                  proxy_set_header Connection "upgrade";
-              }
-          }
-          NGINX
-
-          cat > .ddev/scripts/start-djangocms.sh <<'SCRIPT'
-          #!/usr/bin/env bash
-          set -euo pipefail
-
-          PROJECT_ROOT="/var/www/html"
-          SITE_DIR="$PROJECT_ROOT/djangocms-site"
-          VENV_DIR="$PROJECT_ROOT/.ddev/.venv"
-
-          if [ ! -d "$VENV_DIR" ]; then
-            python3 -m venv "$VENV_DIR"
-          fi
-
-          # shellcheck disable=SC1091
-          source "$VENV_DIR/bin/activate"
-
-          pip install --quiet --upgrade pip
-          pip install --quiet django-cms
-
-          if [ ! -f "$SITE_DIR/manage.py" ]; then
-            mkdir -p "$SITE_DIR"
-            cd "$SITE_DIR"
-            django-admin startproject djangocmssite .
-            # `python -m cms .` adds django CMS to the just-created project
-            # in place (settings.py, urls.py, a templates/ dir) and runs
-            # its own migrations. It does not create a superuser when
-            # adding to an existing project (only when scaffolding a new
-            # one from scratch) — that's handled explicitly below instead.
-            python -m cms . --noinput --username=admin --email=admin@example.com --use-bundled-install-rules
-            cd "$PROJECT_ROOT"
-          fi
-
-          # Own idempotency check (grep for CSRF_TRUSTED_ORIGINS), separate
-          # from "manage.py doesn't exist yet": if supervisor restarts this
-          # script mid-provisioning, manage.py may already exist from a
-          # partial attempt, and skipping straight past this patch on retry
-          # would leave Django rejecting every request with DisallowedHost.
-          if ! grep -q "^CSRF_TRUSTED_ORIGINS" "$SITE_DIR/djangocmssite/settings.py"; then
-            sed -i "s/^ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['*']/" "$SITE_DIR/djangocmssite/settings.py"
-            cat >> "$SITE_DIR/djangocmssite/settings.py" <<PYEOF
-
-          CSRF_TRUSTED_ORIGINS = [
-              origin
-              for origin in [
-                  "${DDEV_PRIMARY_URL:-}",
-                  "${DDEV_PRIMARY_URL_WITHOUT_PORT:-}",
-                  "https://*.ddev.site",
-                  "http://*.ddev.site",
-              ]
-              if origin
-          ]
-          PYEOF
-          fi
-
-          cd "$SITE_DIR"
-          python manage.py migrate --noinput
-
-          python manage.py shell -c "
-          from django.contrib.auth import get_user_model
-          User = get_user_model()
-          user, _ = User.objects.get_or_create(username='admin', defaults={'email': 'admin@example.com', 'is_staff': True, 'is_superuser': True})
-          user.is_staff = True
-          user.is_superuser = True
-          user.set_password('admin')
-          user.save()
-          "
-
-          exec python manage.py runserver 0.0.0.0:8000
-          SCRIPT
-          chmod +x .ddev/scripts/start-djangocms.sh
-
-      - name: Start ddev (builds and boots the live django CMS site)
-        run: ddev start
-
-      - name: Wait for the django CMS site to come up
-        run: |
-          # Plain HTTP, not DDEV_PRIMARY_URL's https:// — ddev's self-signed
-          # cert isn't trusted by wait-on's plain Node http(s) client (unlike
-          # Playwright, which we've set ignoreHTTPSErrors:true for), so an
-          # https probe here just times out.
-          HOSTNAME=$(ddev exec 'echo $DDEV_HOSTNAME')
-          URL="http://${HOSTNAME}"
-          echo "LAUNCH_URL=$URL" >> "$GITHUB_ENV"
-          npx wait-on -i 5000 -t 300000 "$URL"
-
-      - name: Check the JSDoc examples and feature steps against the step regexes
+      - name: Check the examples and the feature steps against the step regexes
         run: npm run test:examples
 
-      - name: Run the django-cms-steps test suite
+      - name: Load every step and feature without a browser
+        run: npm run test:dry-run
+
+      - name: Install DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        with:
+          # The DDEV project is in site/, not in the repository root: start it below.
+          autostart: 'false'
+
+      - name: Build and start the django CMS site (site/)
+        # The first start installs django CMS with its quickstart command
+        # (djangocms-versioning, djangocms-alias, djangocms-text,
+        # djangocms-frontend, django-filer) and creates the accounts.
+        run: npm run site:start
+
+      - name: Wait for the django CMS site
+        run: |
+          # Plain HTTP: the runner does not trust DDEV's certificate.
+          HOSTNAME=$(cd site && ddev exec 'echo $DDEV_HOSTNAME')
+          URL="http://${HOSTNAME}"
+          echo "LAUNCH_URL=$URL" >> "$GITHUB_ENV"
+          npx wait-on -i 5000 -t 600000 "$URL/en/admin/login/"
+
+      - name: Report the versions of the site
+        run: cd site && ddev exec '.venv/bin/pip list 2>/dev/null | grep -i -E "^(django|djangocms|django-cms|django-filer)"'
+
+      - name: Run the empty-site lane (the welcome screen, before any page exists)
         env:
-          DJANGOCMS_ADMIN_USER: admin
-          DJANGOCMS_ADMIN_PASS: admin
+          CUCUMBER_TAGS: '@empty-site'
         run: npm test
 
-      - name: Upload cucumber HTML report
+      - name: Seed the baseline content
+        run: npm run site:seed
+
+      - name: Run the django-cms-steps suite
+        run: npm test
+
+      - name: Upload the Cucumber report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -211,7 +76,7 @@ jobs:
           path: tests/reports/
           if-no-files-found: ignore
 
-      - name: Upload failure screenshots
+      - name: Upload the failure screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -219,6 +84,6 @@ jobs:
           path: screenshots/
           if-no-files-found: ignore
 
-      - name: ddev logs (on failure)
+      - name: DDEV logs (on failure)
         if: failure()
-        run: ddev logs
+        run: cd site && ddev logs

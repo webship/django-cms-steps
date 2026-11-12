@@ -98,12 +98,19 @@ webship-js core step) and that every feature step is defined exactly once.
 
 ## Testing this package itself
 
-This repository also contains its own test suite (`tests/features/`) that
-exercises the steps in `tests/step-definitions/django-cms.steps.js`. It
-doesn't bundle a demo site — point it at any django CMS install you have via
-`LAUNCH_URL`. CI builds a throwaway django CMS site with
-[ddev](https://ddev.com/) at run time to test against on every push/PR — see
+The suite in `tests/features/` runs against a real django CMS site that this
+repository builds with DDEV: [`site/`](site/README.md), the django CMS
+quickstart with djangocms-versioning, two languages and two accounts. CI
+builds the same site on every push and pull request, see
 [.github/workflows/test.yml](.github/workflows/test.yml).
+
+```bash
+npm run site:start                                          # the first start installs django CMS
+npm run site:empty && CUCUMBER_TAGS=@empty-site npm test    # the welcome screen of a site with no pages
+npm run site:seed  && npm test                              # everything else, on the baseline content
+```
+
+`LAUNCH_URL` points the suite at another django CMS site.
 
 ## License
 
