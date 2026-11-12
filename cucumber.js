@@ -57,6 +57,15 @@ module.exports = {
           password: process.env.DJANGOCMS_EDITOR_PASS || 'editor',
         },
       },
+      // What the django CMS steps need to know about the site. `adminLanguage`
+      // opens the admin under that language prefix (/en/admin/), so the admin
+      // and the page tree answer in the language the features are written in;
+      // leave it out for a site without language prefixes. `menu`,
+      // `breadcrumb` and `languageChooser` take CSS selectors when the site
+      // templates differ from the django CMS defaults.
+      djangoCms: {
+        adminLanguage: process.env.DJANGOCMS_ADMIN_LANGUAGE || 'en',
+      },
       selectors: {
         css: {},
         xpath: {},
