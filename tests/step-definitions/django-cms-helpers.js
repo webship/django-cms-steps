@@ -8,7 +8,7 @@
  *
  * Every selector below was read from a real django CMS 5.1 site built with
  * the django CMS quickstart (djangocms-versioning 2.8, djangocms-text 1.0,
- * djangocms-frontend 2.5, djangocms-alias 3.2 on Django 5.2).
+ * djangocms-frontend 2.5, djangocms-alias 3.2, on Django 5.2 and 6.1).
  */
 
 const { gotoUrl, smartSettle, friendly } = require('webship-js/tests/step-definitions/webship');
