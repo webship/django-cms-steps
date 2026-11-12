@@ -46,16 +46,16 @@ Feature: Publish and unpublish with versions
     And I create a page titled "Version visible" with the text "Now you see me." with the wizard
     And I log out
     And I go to "/en/version-visible/"
-    Then I should see "Page not found"
-    But I should not see "Now you see me."
+    Then I should be on the page not found page
 
     Given I am a logged in user with the "admin" user
     When I open the page "Version visible" from the page tree
     And I publish the page
     And I log out
     And I go to "/en/version-visible/"
-    Then I should see "Now you see me."
-    But I should not see "Page not found"
+    Then I should not be on the page not found page
+    And I should see "Now you see me."
+    And the navigation menu should list "Version visible"
 
     Given I am a logged in user with the "admin" user
     And I am on the page tree
