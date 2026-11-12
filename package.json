@@ -1,6 +1,6 @@
 {
   "name": "@webship-js/django-cms-steps",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "webship-js step definitions for testing django CMS sites: login by registry handle, the toolbar and its menus, the modal and the sideframe, the create wizard, the structure board and plugins, versions, the page tree, users and permissions, languages, the navigation menu and the breadcrumb.",
   "main": "index.js",
   "files": [
