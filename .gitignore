@@ -7,5 +7,10 @@ npm-debug.log*
 !/tests/reports/README.md
 package-lock.json
 
-# Local DDEV build of the django CMS site the suite runs against (CI generates the same in the runner).
-site/
+/videos/
+
+# The django CMS site the suite runs against: its DDEV project and scripts are
+# versioned, what a start builds is not.
+/site/.venv/
+/site/djangocmssite/
+/site/media/

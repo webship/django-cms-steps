@@ -1,0 +1,11 @@
+{% extends "bootstrap5/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Page not found" %} | django CMS test site{% endblock %}
+{% block brand %}django CMS test site{% endblock %}
+{% block content %}
+  <main class="container py-4">
+    <h1>{% trans "Page not found" %}</h1>
+    <p>{% trans "The page you asked for does not exist." %}</p>
+    <p><a href="/">{% trans "Back to the home page" %}</a></p>
+  </main>
+{% endblock content %}

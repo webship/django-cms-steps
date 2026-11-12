@@ -1,6 +1,8 @@
+@empty-site
 Feature: Welcome screen on a fresh install
   A fresh django CMS site has no pages. Its root renders the welcome screen for a signed-in user,
   and its own script sends an anonymous visitor to the login form instead.
+  This lane runs before the site content is seeded: CUCUMBER_TAGS=@empty-site.
 
   Scenario: A signed-in user sees the welcome screen before any page exists
     Given I am a logged in user with the "admin" user

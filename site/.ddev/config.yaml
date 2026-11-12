@@ -1,0 +1,14 @@
+# A real django CMS site for the django-cms-steps suite (local runs and CI).
+# DDEV has no Python project type, so this is a `generic` project: the web
+# image gets Python, scripts/start.sh builds the site and runs the Django
+# development server, and nginx proxies the DDEV router to it.
+name: django-cms-steps
+type: generic
+docroot: ""
+webserver_type: nginx-fpm
+# The site uses SQLite, as the django CMS quickstart does.
+omit_containers: [db]
+web_extra_daemons:
+  - name: "djangocms"
+    command: "bash /var/www/html/scripts/start.sh"
+    directory: /var/www/html

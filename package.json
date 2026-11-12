@@ -15,6 +15,11 @@
     "test:firefox": "BROWSER=firefox cucumber-js --config cucumber.js",
     "test:webkit": "BROWSER=webkit cucumber-js --config cucumber.js",
     "test:examples": "node scripts/check-examples.js",
+    "test:dry-run": "cucumber-js --config cucumber.js --dry-run",
+    "site:start": "cd ${SITE_DIR:-site} && ddev start",
+    "site:stop": "cd ${SITE_DIR:-site} && ddev stop",
+    "site:seed": "cd ${SITE_DIR:-site} && ddev exec 'bash scripts/manage.sh shell < scripts/seed.py'",
+    "site:empty": "cd ${SITE_DIR:-site} && ddev exec 'bash scripts/manage.sh shell < scripts/empty.py'",
     "report": "generate-reports"
   },
   "keywords": [

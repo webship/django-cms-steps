@@ -1,0 +1,34 @@
+{% extends "bootstrap5/base.html" %}
+{% load cms_tags menu_tags i18n %}
+{% comment %}
+  The quickstart base template (Bootstrap 5 navigation bar with the django CMS
+  menu) plus the breadcrumb and the language chooser, both rendered by the
+  django CMS template tags with their default templates.
+{% endcomment %}
+{% block title %}{% page_attribute "page_title" %} | django CMS test site{% endblock %}
+{% block brand %}django CMS test site{% endblock %}
+{% block page_head %}
+  <style>
+    /* django CMS renders the language chooser and the breadcrumb as plain lists. */
+    .language-chooser { gap: 1rem; }
+    .language-chooser a { color: #fff; }
+    .language-chooser .active a { font-weight: 700; text-decoration: none; }
+    .breadcrumb { gap: .5rem; }
+  </style>
+{% endblock %}
+{% block searchbar %}
+  <ul class="navbar-nav language-chooser" aria-label="{% trans 'Languages' %}">
+    {% language_chooser "menu/language_chooser.html" %}
+  </ul>
+{% endblock %}
+{% block content %}
+  <main class="container py-4">
+    <nav aria-label="{% trans 'Breadcrumb' %}">
+      <ol class="breadcrumb">{% show_breadcrumb 0 "menu/breadcrumb.html" 0 %}</ol>
+    </nav>
+    <h1>{% page_attribute "page_title" %}</h1>
+    <section>
+      {% placeholder "Page Content" %}
+    </section>
+  </main>
+{% endblock content %}

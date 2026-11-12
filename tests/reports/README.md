@@ -1,8 +1,5 @@
 # tests/reports
 
-Generated Cucumber HTML/JSON reports land here (`npm test` / `npm run report`).
-This directory's contents are gitignored except for this file — see
-[docs/getting-started.md](../../docs/getting-started.md) for how to run the
-suite and view a report locally, and
-[.github/workflows/test.yml](../../.github/workflows/test.yml) for how CI
-uploads the report as a build artifact.
+The Cucumber JSON and HTML reports of a run land here (`npm test`, then
+`npm run report`). Everything in this folder is ignored by git, except this
+file.
