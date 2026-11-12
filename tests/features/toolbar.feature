@@ -6,6 +6,11 @@ Feature: The CMS toolbar
   Background:
     Given I am a logged in user with the "admin" user
 
+  Scenario: The toolbar reports the django CMS version
+    Then the site should be running django CMS
+    And the site should be running django CMS 5
+    But the site should not be running django CMS 3
+
   Scenario: The toolbar of a published page
     When I go to "/en/about/"
     Then the toolbar should have the "Page" menu
