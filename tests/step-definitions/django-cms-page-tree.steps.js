@@ -53,14 +53,14 @@ async function treeSettled(world) {
 /**
  * Open the page tree, the admin list of pages (/admin/cms/pagecontent/).
  *
- * Example #1: Given I am on the django CMS page tree
- * Example #2: Given we are on the django CMS page tree
- * Example #3: And on the django CMS page tree
+ * Example #1: Given I am on the CMS page tree
+ * Example #2: Given we are on the CMS page tree
+ * Example #3: And on the CMS page tree
  * Example #4: Given I am on the CMS page tree
  * Example #5: Given I am on the page tree
  *
  */
-Given(/^(I am |we are )*on the (?:(?:django )?CMS )?page tree$/, async function (pronounCase) {
+Given(/^(I am |we are )*on the (?:CMS )?page tree$/, async function (pronounCase) {
   await gotoUrl(this.page, adminUrl(this, 'cms/pagecontent/'));
   await settle(this);
 });
@@ -72,10 +72,10 @@ Given(/^(I am |we are )*on the (?:(?:django )?CMS )?page tree$/, async function 
  * Example #2: Then we should see the page tree
  * Example #3: And should see the CMS page tree
  * Example #4: Then I should not see the page tree
- * Example #5: And we should see the django CMS page tree
+ * Example #5: And we should see the CMS page tree
  *
  */
-Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, notCase) {
+Then(/^(I |we )*should( not)* see the (?:CMS )?page tree$/, async function (pronounCase, notCase) {
   await assertPresence(this.page.locator(SELECTORS.pageTree), notCase, {
     label: 'the page tree (`.cms-pagetree`)',
     hint: TREE_HINT,
@@ -94,7 +94,7 @@ Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?page tree$/, async fu
  * Example #5: And we should see "Contact" in the CMS page tree
  *
  */
-Then(/^(I |we )*should( not)* see "([^"]*)" in the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, notCase, title) {
+Then(/^(I |we )*should( not)* see "([^"]*)" in the (?:CMS )?page tree$/, async function (pronounCase, notCase, title) {
   const row = await findPageTreeRow(this, title);
   if (notCase && row) {
     throw explain({ message: `Expected the page tree not to list "${title}", but it does.`, hint: 'Titles match exactly, in the language the page tree shows.' });
@@ -115,7 +115,7 @@ Then(/^(I |we )*should( not)* see "([^"]*)" in the (?:(?:django )?CMS )?page tre
  * Example #5: And the page "Home" should be changed in the CMS page tree
  *
  */
-Then(/^the page "([^"]*)" should( not)* be (published|a draft|draft|unpublished|archived|changed|empty) in the (?:(?:django )?CMS )?page tree$/, async function (title, notCase, stateWord) {
+Then(/^the page "([^"]*)" should( not)* be (published|a draft|draft|unpublished|archived|changed|empty) in the (?:CMS )?page tree$/, async function (title, notCase, stateWord) {
   const row = await requirePageTreeRow(this, title);
   const wanted = STATES[stateWord];
   const actual = await rowState(this, row);
@@ -139,7 +139,7 @@ Then(/^the page "([^"]*)" should( not)* be (published|a draft|draft|unpublished|
  * Example #5: But the page "Home" should not be a sub page of "About" in the page tree
  *
  */
-Then(/^the page "([^"]*)" should( not)* be a sub ?page of "([^"]*)" in the (?:(?:django )?CMS )?page tree$/, async function (title, notCase, parent) {
+Then(/^the page "([^"]*)" should( not)* be a sub ?page of "([^"]*)" in the (?:CMS )?page tree$/, async function (title, notCase, parent) {
   const row = await requirePageTreeRow(this, title);
   if (Boolean(notCase) === (row.parent === parent)) {
     throw explain({
@@ -160,7 +160,7 @@ Then(/^the page "([^"]*)" should( not)* be a sub ?page of "([^"]*)" in the (?:(?
  * Example #5: But the page "Team" should not be the home page in the page tree
  *
  */
-Then(/^the page "([^"]*)" should( not)* be the home ?page in the (?:(?:django )?CMS )?page tree$/, async function (title, notCase) {
+Then(/^the page "([^"]*)" should( not)* be the home ?page in the (?:CMS )?page tree$/, async function (title, notCase) {
   const row = await requirePageTreeRow(this, title);
   if (Boolean(notCase) === row.home) {
     const home = (await pageTreeRows(this)).find((r) => r.home);
@@ -180,7 +180,7 @@ Then(/^the page "([^"]*)" should( not)* be the home ?page in the (?:(?:django )?
  * Example #5: And we open the page "Home" from the page tree
  *
  */
-When(/^(I |we )*open the page "([^"]*)" from the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, title) {
+When(/^(I |we )*open the page "([^"]*)" from the (?:CMS )?page tree$/, async function (pronounCase, title) {
   const row = await requirePageTreeRow(this, title);
   await actOrExplain('open', `the page "${title}" from the page tree`, async () => {
     const link = pageTreeCells(this, row).locator('a.js-cms-pagetree-page-view').first();
@@ -205,7 +205,7 @@ When(/^(I |we )*open the page "([^"]*)" from the (?:(?:django )?CMS )?page tree$
  * Example #5: And we open the advanced settings of the page "Home" in the page tree
  *
  */
-When(/^(I |we )*open the (advanced )?settings of the page "([^"]*)" in the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, advanced, title) {
+When(/^(I |we )*open the (advanced )?settings of the page "([^"]*)" in the (?:CMS )?page tree$/, async function (pronounCase, advanced, title) {
   const row = await requirePageTreeRow(this, title);
   await actOrExplain('open', `the settings of the page "${title}"`, async () => {
     const link = pageTreeCells(this, row).locator('a.js-cms-tree-advanced-settings').first();
@@ -229,7 +229,7 @@ When(/^(I |we )*open the (advanced )?settings of the page "([^"]*)" in the (?:(?
  * Example #5: And we unpublish the page "Old news" in the page tree
  *
  */
-When(/^(I |we )*(publish|unpublish) the page "([^"]*)" in the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, action, title) {
+When(/^(I |we )*(publish|unpublish) the page "([^"]*)" in the (?:CMS )?page tree$/, async function (pronounCase, action, title) {
   const row = await requirePageTreeRow(this, title);
   const page = this.page;
   await actOrExplain(action, `the page "${title}" in the page tree`, async () => {
@@ -272,7 +272,7 @@ When(/^(I |we )*(publish|unpublish) the page "([^"]*)" in the (?:(?:django )?CMS
  * Example #5: And we delete the page "Board" from the page tree
  *
  */
-When(/^(I |we )*delete the page "([^"]*)" (?:in|from) the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, title) {
+When(/^(I |we )*delete the page "([^"]*)" (?:in|from) the (?:CMS )?page tree$/, async function (pronounCase, title) {
   const row = await requirePageTreeRow(this, title);
   const page = this.page;
   await actOrExplain('delete', `the page "${title}" in the page tree`, async () => {
@@ -308,7 +308,7 @@ When(/^(I |we )*delete the page "([^"]*)" (?:in|from) the (?:(?:django )?CMS )?p
  * Example #5: And we move the page "Board" to the top level of the page tree
  *
  */
-When(/^(I |we )*move the page "([^"]*)" (?:under the page "([^"]*)" in|to the (top) level of) the (?:(?:django )?CMS )?page tree$/, async function (pronounCase, title, parent, top) {
+When(/^(I |we )*move the page "([^"]*)" (?:under the page "([^"]*)" in|to the (top) level of) the (?:CMS )?page tree$/, async function (pronounCase, title, parent, top) {
   const row = await requirePageTreeRow(this, title);
   const page = this.page;
   await actOrExplain('move', `the page "${title}"`, async () => {

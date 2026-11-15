@@ -10,7 +10,7 @@ Feature: Welcome screen of a site with no pages
   Scenario: A logged-in user sees the welcome screen before any page exists
     Given I am a logged in user with the "admin" user
     When I go to the homepage
-    Then I should see the django CMS welcome screen
+    Then I should see the CMS welcome screen
     And I should see the CMS toolbar
     And the toolbar should have the "Create" button
     But the toolbar should not have the "Page" menu

@@ -272,14 +272,14 @@ Then(/^(I |we )*should( not)* be on the (?:404|page not found) page$/, async fun
  * showing. django CMS renders it on the site root while the site has no
  * page at all.
  *
- * Example #1: Then I should see the django CMS welcome screen
- * Example #2: Then we should see the django CMS welcome screen
+ * Example #1: Then I should see the CMS welcome screen
+ * Example #2: Then we should see the CMS welcome screen
  * Example #3: And should see the CMS welcome screen
  * Example #4: Then I should see the welcome screen
  * Example #5: Then I should not see the welcome screen
  *
  */
-Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?welcome screen$/, async function (pronounCase, notCase) {
+Then(/^(I |we )*should( not)* see the (?:CMS )?welcome screen$/, async function (pronounCase, notCase) {
   await assertPresence(this.page.locator(SELECTORS.welcomePart), notCase, {
     label: 'the "no pages yet" welcome screen',
     hint: notCase
@@ -290,23 +290,24 @@ Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?welcome screen$/, asy
 });
 
 /**
- * Assert the site runs django CMS, optionally a given version or version
- * line ("5", "5.1", "5.1.3"). The version is the one the toolbar reports, so
- * the step needs a logged-in staff user on a CMS page.
+ * Assert the version of the CMS: "be" compares the whole version ("5.1.3"),
+ * "start with" a version line by whole parts ("5" or "5.1"). The version is
+ * the one the toolbar reports, so the step needs a logged-in staff user on a
+ * CMS page.
  *
- * Example #1: Then the site should be running django CMS
- * Example #2: Then the site should be running django CMS 5
- * Example #3: And the site should be running django CMS 5.1
- * Example #4: Then the site should not be running django CMS 3
- * Example #5: But the site should not be running django CMS 4
+ * Example #1: Then the CMS version should start with "5"
+ * Example #2: Then the CMS version should start with "5.1"
+ * Example #3: And the CMS version should be "5.1.3"
+ * Example #4: Then the CMS version should not start with "3"
+ * Example #5: But the CMS version should not be "4.1.0"
  *
  */
-Then(/^the site should( not)* be running django CMS(?: (\d+(?:\.\d+)*))?$/, async function (notCase, wanted) {
+Then(/^the CMS version should( not)* (be|start with) "([^"]*)"$/, async function (notCase, mode, wanted) {
   await toolbarMenu(this, 'site');
   const version = await this.page.evaluate(() => (window.CMS && window.CMS.config && window.CMS.config.settings ? window.CMS.config.settings.version : null))
     || cleanLabel(await this.page.locator('#cms-top .cms-toolbar-item-logo a').first().getAttribute('title').catch(() => ''));
-  const matches = Boolean(version) && (!wanted || version === wanted || version.startsWith(`${wanted}.`));
+  const matches = Boolean(version) && (version === wanted || (mode === 'start with' && version.startsWith(`${wanted}.`)));
   if (Boolean(notCase) === matches) {
-    throw explain({ message: `Expected the site ${notCase ? 'not ' : ''}to be running django CMS${wanted ? ` ${wanted}` : ''}, but the toolbar reports ${version || 'no version'}.`, hint: 'The toolbar reports the version to a logged-in staff user on a CMS page.' });
+    throw explain({ message: `Expected the CMS version ${notCase ? 'not ' : ''}to ${mode} "${wanted}", but the toolbar reports ${version || 'no version'}.`, hint: 'The toolbar reports the version to a logged-in staff user on a CMS page.' });
   }
 });
