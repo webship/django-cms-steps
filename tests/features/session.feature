@@ -12,7 +12,7 @@ Feature: Log in and log out
   Scenario: An editor logs in by the registry handle
     Given we are a logged in user with the username "editor"
     Then we should be logged in
-    And we should see the django CMS toolbar
+    And we should see the CMS toolbar
 
   Scenario: An anonymous visitor does not see the CMS toolbar
     Given I am not logged in

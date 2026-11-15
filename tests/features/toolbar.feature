@@ -6,10 +6,10 @@ Feature: The CMS toolbar
   Background:
     Given I am a logged in user with the "admin" user
 
-  Scenario: The toolbar reports the django CMS version
-    Then the site should be running django CMS
-    And the site should be running django CMS 5
-    But the site should not be running django CMS 3
+  Scenario: The toolbar reports the version of the CMS
+    Then I should see the toolbar
+    And the CMS version should start with "5"
+    But the CMS version should not start with "3"
 
   Scenario: The toolbar of a published page
     When I go to "/en/about/"
@@ -58,8 +58,8 @@ Feature: The CMS toolbar
     Then I should see "Change user" in the CMS sideframe
 
   Scenario: The site menu opens the Django administration in the CMS sideframe
-    When I click "Administration" in the django CMS toolbar menu
-    Then the django CMS sideframe should be showing "/admin/"
+    When I click "Administration" in the CMS toolbar menu
+    Then the CMS sideframe should be showing "/admin/"
     But the sideframe should not be showing "/admin/auth/user/"
 
   Scenario: The toolbar buttons follow the page

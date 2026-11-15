@@ -101,8 +101,8 @@ are django CMS's own markup and need no configuration.
 ## Steps
 
 Every Then step takes `should` or `should not`. Every step takes `I`, `we` or
-no pronoun. "CMS" and "django CMS" are optional before "toolbar" and "page
-tree"; the modal and the sideframe are always "the CMS modal" and "the CMS
+no pronoun. No step phrase names the platform. "CMS" is optional before
+"toolbar" and "page tree"; the modal and the sideframe are always "the CMS modal" and "the CMS
 sideframe", which keeps them apart from webship-js's own modal steps. Every
 failure is a short message with a hint that names what the page really shows.
 
@@ -218,7 +218,7 @@ These steps read the admin; none of them creates or changes an account.
 | `the active language should( not) be "<name>"` | Then |
 | `I should( not) be on the page not found page` | Then |
 | `I should( not) see the welcome screen` | Then |
-| `the site should( not) be running django CMS( <version>)` | Then |
+| `the CMS version should( not) (be\|start with) "<version>"` | Then |
 
 webship-js itself brings the steps for the rest: `the page language should be
 "de"`, the accessibility audits (`the page should have no serious

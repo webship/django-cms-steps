@@ -36,12 +36,12 @@ const overlayKind = (word) => (/modal/i.test(word) ? 'modal' : 'sideframe');
  *
  * Example #1: Then I should see the CMS toolbar
  * Example #2: Then I should not see the CMS toolbar
- * Example #3: And we should see the django CMS toolbar
+ * Example #3: And we should see the CMS toolbar
  * Example #4: But we should not see the CMS toolbar
  * Example #5: Then should see the toolbar
  *
  */
-Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?toolbar$/, async function (pronounCase, notCase) {
+Then(/^(I |we )*should( not)* see the (?:CMS )?toolbar$/, async function (pronounCase, notCase) {
   if (notCase) {
     await assertPresence(this.page.locator(SELECTORS.toolbar), notCase, {
       label: 'the CMS toolbar',
@@ -67,12 +67,12 @@ Then(/^(I |we )*should( not)* see the (?:(?:django )?CMS )?toolbar$/, async func
  *
  * Example #1: When I click "Pages" in the CMS toolbar menu
  * Example #2: When I click "Users" in the CMS toolbar menu
- * Example #3: And we click "Administration" in the django CMS toolbar menu
+ * Example #3: And we click "Administration" in the CMS toolbar menu
  * Example #4: When I click "User settings" in the toolbar menu
  * Example #5: And click "Aliases" in the CMS toolbar menu
  *
  */
-When(/^(I |we )*click "([^"]*)" in the (?:(?:django )?CMS )?toolbar menu$/, async function (pronounCase, entry) {
+When(/^(I |we )*click "([^"]*)" in the (?:CMS )?toolbar menu$/, async function (pronounCase, entry) {
   await clickToolbarMenuEntry(this, 'site', entry);
   await settle(this, 1000);
 });
@@ -87,10 +87,10 @@ When(/^(I |we )*click "([^"]*)" in the (?:(?:django )?CMS )?toolbar menu$/, asyn
  * Example #2: When I click "Create Page > New Sub Page" in the "Page" toolbar menu
  * Example #3: And we click "Manage Versions" in the "Version" CMS toolbar menu
  * Example #4: When I click "Add Translation > Deutsch" in the "Language" toolbar menu
- * Example #5: And click "Delete page" in the "Page" django CMS toolbar menu
+ * Example #5: And click "Delete page" in the "Page" CMS toolbar menu
  *
  */
-When(/^(I |we )*click "([^"]*)" in the "([^"]*)" (?:(?:django )?CMS )?toolbar menu$/, async function (pronounCase, entry, menu) {
+When(/^(I |we )*click "([^"]*)" in the "([^"]*)" (?:CMS )?toolbar menu$/, async function (pronounCase, entry, menu) {
   await clickToolbarMenuEntry(this, menu, entry);
   await settle(this, 1000);
 });
@@ -103,11 +103,11 @@ When(/^(I |we )*click "([^"]*)" in the "([^"]*)" (?:(?:django )?CMS )?toolbar me
  * Example #1: Then the toolbar should have the "Page" menu
  * Example #2: Then the CMS toolbar should not have the "Page" menu
  * Example #3: And the toolbar should have the "Language" menu
- * Example #4: Then the django CMS toolbar should have the "Version" menu
+ * Example #4: Then the CMS toolbar should have the "Version" menu
  * Example #5: But the toolbar should not have the "Version" menu
  *
  */
-Then(/^the (?:(?:django )?CMS )?toolbar should( not)* have the "([^"]*)" menu$/, async function (notCase, menu) {
+Then(/^the (?:CMS )?toolbar should( not)* have the "([^"]*)" menu$/, async function (notCase, menu) {
   await assertPresence(this.page.locator(SELECTORS.toolbarBar), null, { label: 'the CMS toolbar', hint: TOOLBAR_HINT, timeout: budget(this) });
   const wanted = cleanLabel(menu).toLowerCase();
   const labels = await toolbarMenuLabels(this);
@@ -130,10 +130,10 @@ Then(/^the (?:(?:django )?CMS )?toolbar should( not)* have the "([^"]*)" menu$/,
  * Example #2: Then the "site" toolbar menu should not list "Users"
  * Example #3: And the "Page" CMS toolbar menu should list "Page settings"
  * Example #4: Then the "Language" toolbar menu should list "Add Translation > Deutsch"
- * Example #5: But the "Page" django CMS toolbar menu should not list "Publish"
+ * Example #5: But the "Page" CMS toolbar menu should not list "Publish"
  *
  */
-Then(/^the "([^"]*)" (?:(?:django )?CMS )?toolbar menu should( not)* list "([^"]*)"$/, async function (menu, notCase, entry) {
+Then(/^the "([^"]*)" (?:CMS )?toolbar menu should( not)* list "([^"]*)"$/, async function (menu, notCase, entry) {
   const entries = await toolbarMenuEntries(this, menu);
   const wanted = String(entry).split(/\s*>\s*/).map(cleanLabel).join(' > ').toLowerCase();
   const has = entries.some((e) => e.toLowerCase() === wanted);
@@ -154,10 +154,10 @@ Then(/^the "([^"]*)" (?:(?:django )?CMS )?toolbar menu should( not)* list "([^"]
  * Example #2: When I click the "Preview" toolbar button
  * Example #3: And we click the "New Draft" CMS toolbar button
  * Example #4: When click the "Publish" toolbar button
- * Example #5: And I click the "View published" django CMS toolbar button
+ * Example #5: And I click the "View published" CMS toolbar button
  *
  */
-When(/^(I |we )*click the "([^"]*)" (?:(?:django )?CMS )?toolbar button$/, async function (pronounCase, label) {
+When(/^(I |we )*click the "([^"]*)" (?:CMS )?toolbar button$/, async function (pronounCase, label) {
   const button = toolbarButton(this, label).first();
   if (!(await button.count())) {
     const labels = await toolbarButtonLabels(this);
@@ -181,11 +181,11 @@ When(/^(I |we )*click the "([^"]*)" (?:(?:django )?CMS )?toolbar button$/, async
  * Example #1: Then the toolbar should have the "Publish" button
  * Example #2: Then the toolbar should not have the "Publish" button
  * Example #3: And the CMS toolbar should have the "New Draft" button
- * Example #4: Then the django CMS toolbar should have the "Create" button
+ * Example #4: Then the CMS toolbar should have the "Create" button
  * Example #5: But the toolbar should not have the "New Draft" button
  *
  */
-Then(/^the (?:(?:django )?CMS )?toolbar should( not)* have the "([^"]*)" button$/, async function (notCase, label) {
+Then(/^the (?:CMS )?toolbar should( not)* have the "([^"]*)" button$/, async function (notCase, label) {
   await assertPresence(this.page.locator(SELECTORS.toolbarBar), null, { label: 'the CMS toolbar', hint: TOOLBAR_HINT, timeout: budget(this) });
   try {
     await toolbarButton(this, label).first().waitFor({ state: notCase ? 'hidden' : 'visible', timeout: notCase ? 2000 : budget(this) });
@@ -209,12 +209,12 @@ Then(/^the (?:(?:django )?CMS )?toolbar should( not)* have the "([^"]*)" button$
  *
  * Example #1: Then I should see the CMS message "Version published"
  * Example #2: Then I should not see the CMS message "Version published"
- * Example #3: And we should see the django CMS message "The page content"
+ * Example #3: And we should see the CMS message "The page content"
  * Example #4: Then should see the CMS message "was changed successfully"
  * Example #5: But we should not see the CMS message "Error"
  *
  */
-Then(/^(I |we )*should( not)* see the (?:django )?CMS message "([^"]*)"$/, async function (pronounCase, notCase, text) {
+Then(/^(I |we )*should( not)* see the CMS message "([^"]*)"$/, async function (pronounCase, notCase, text) {
   const message = this.page.locator(`${SELECTORS.cmsMessage}, ${SELECTORS.adminMessage}`).filter({ hasText: text });
   try {
     await message.first().waitFor({ state: notCase ? 'detached' : 'attached', timeout: notCase ? 2000 : budget(this) });
@@ -236,12 +236,12 @@ Then(/^(I |we )*should( not)* see the (?:django )?CMS message "([^"]*)"$/, async
  *
  * Example #1: Then the CMS modal should be open
  * Example #2: Then the CMS modal should not be open
- * Example #3: And the django CMS modal should be open
+ * Example #3: And the CMS modal should be open
  * Example #4: But the CMS modal should not be open
- * Example #5: Then the django CMS modal should not be open
+ * Example #5: Then the CMS modal should not be open
  *
  */
-Then(/^the (?:django )?CMS modal should( not)* be open$/, async function (notCase) {
+Then(/^the CMS modal should( not)* be open$/, async function (notCase) {
   await waitForModal(this, !notCase);
 });
 
@@ -251,12 +251,12 @@ Then(/^the (?:django )?CMS modal should( not)* be open$/, async function (notCas
  *
  * Example #1: Then the CMS modal title should be "Create"
  * Example #2: Then the CMS modal title should contain "Page settings"
- * Example #3: And the django CMS modal title should contain "Text"
+ * Example #3: And the CMS modal title should contain "Text"
  * Example #4: Then the CMS modal title should not contain "Delete"
  * Example #5: But the CMS modal title should not be "Create"
  *
  */
-Then(/^the (?:django )?CMS modal title should( not)* (be|contain) "([^"]*)"$/, async function (notCase, mode, expected) {
+Then(/^the CMS modal title should( not)* (be|contain) "([^"]*)"$/, async function (notCase, mode, expected) {
   await waitForModal(this, true);
   const title = this.page.locator(SELECTORS.modalTitle).first();
   const matcher = mode === 'be' ? labelRegex(expected) : expected;
@@ -277,12 +277,12 @@ Then(/^the (?:django )?CMS modal title should( not)* (be|contain) "([^"]*)"$/, a
  *
  * Example #1: Then the CMS sideframe should be showing "/admin/cms/pagecontent/"
  * Example #2: Then the CMS sideframe should be showing "/admin/auth/user/"
- * Example #3: And the django CMS sideframe should be showing "/admin/"
+ * Example #3: And the CMS sideframe should be showing "/admin/"
  * Example #4: Then the sideframe should not be showing "/admin/auth/user/"
  * Example #5: And the CMS sideframe should not be showing "/admin/cms/pagecontent/"
  *
  */
-Then(/^the (?:(?:django )?CMS )?sideframe should( not)* be showing "([^"]*)"$/, async function (notCase, urlPart) {
+Then(/^the (?:CMS )?sideframe should( not)* be showing "([^"]*)"$/, async function (notCase, urlPart) {
   const frames = this.page.locator(SELECTORS.sideframeFrame);
   const matching = frames.and(this.page.locator(`[src*="${urlPart.replace(/["\\]/g, '\\$&')}"]`));
   try {
@@ -305,12 +305,12 @@ Then(/^the (?:(?:django )?CMS )?sideframe should( not)* be showing "([^"]*)"$/, 
  *
  * Example #1: Then I should see "Provide a title for the new page." in the CMS modal
  * Example #2: Then I should see "Select page content to change" in the CMS sideframe
- * Example #3: And we should not see "Error" in the django CMS modal
+ * Example #3: And we should not see "Error" in the CMS modal
  * Example #4: Then should see "editor" in the CMS sideframe
- * Example #5: But I should not see "Users" in the django CMS sideframe
+ * Example #5: But I should not see "Users" in the CMS sideframe
  *
  */
-Then(/^(I |we )*should( not)* see "([^"]*)" in the (?:django )?CMS (modal|sideframe)$/, async function (pronounCase, notCase, text, overlayWord) {
+Then(/^(I |we )*should( not)* see "([^"]*)" in the CMS (modal|sideframe)$/, async function (pronounCase, notCase, text, overlayWord) {
   const kind = overlayKind(overlayWord);
   const frame = await overlayFrame(this, kind);
   await assertPresence(frame.getByText(text, { exact: false }), notCase, {
@@ -327,12 +327,12 @@ Then(/^(I |we )*should( not)* see "([^"]*)" in the (?:django )?CMS (modal|sidefr
  *
  * Example #1: When I fill in "Title" with "News" in the CMS modal
  * Example #2: When I fill in "Slug" with "news" in the CMS modal
- * Example #3: And we fill in "Menu Title" with "Latest" in the django CMS modal
+ * Example #3: And we fill in "Menu Title" with "Latest" in the CMS modal
  * Example #4: When I fill in "q" with "editor" in the CMS sideframe
- * Example #5: And fill in "Title" with "Neuigkeiten" in the django CMS modal
+ * Example #5: And fill in "Title" with "Neuigkeiten" in the CMS modal
  *
  */
-When(/^(I |we )*fill in "([^"]*)" with "([^"]*)" in the (?:django )?CMS (modal|sideframe)$/, async function (pronounCase, label, value, overlayWord) {
+When(/^(I |we )*fill in "([^"]*)" with "([^"]*)" in the CMS (modal|sideframe)$/, async function (pronounCase, label, value, overlayWord) {
   const kind = overlayKind(overlayWord);
   const frame = await overlayFrame(this, kind);
   await actOrExplain('fill in', `"${label}" in the ${OVERLAYS[kind].name}`, async () => {
@@ -350,12 +350,12 @@ When(/^(I |we )*fill in "([^"]*)" with "([^"]*)" in the (?:django )?CMS (modal|s
  *
  * Example #1: When I click "Next" in the CMS modal
  * Example #2: When I click "Save" in the CMS modal
- * Example #3: And we click "Cancel" in the django CMS modal
+ * Example #3: And we click "Cancel" in the CMS modal
  * Example #4: When I click "editor" in the CMS sideframe
  * Example #5: And click "New sub page" in the CMS modal
  *
  */
-When(/^(I |we )*click "([^"]*)" in the (?:django )?CMS (modal|sideframe)$/, async function (pronounCase, label, overlayWord) {
+When(/^(I |we )*click "([^"]*)" in the CMS (modal|sideframe)$/, async function (pronounCase, label, overlayWord) {
   const kind = overlayKind(overlayWord);
   const frame = await overlayFrame(this, kind);
   await actOrExplain('click', `"${label}" in the ${OVERLAYS[kind].name}`, async () => {
@@ -376,12 +376,12 @@ When(/^(I |we )*click "([^"]*)" in the (?:django )?CMS (modal|sideframe)$/, asyn
  *
  * Example #1: When I close the CMS modal
  * Example #2: When I close the CMS sideframe
- * Example #3: And we close the django CMS modal
+ * Example #3: And we close the CMS modal
  * Example #4: When close the CMS sideframe
- * Example #5: And we close the django CMS sideframe
+ * Example #5: And we close the CMS sideframe
  *
  */
-When(/^(I |we )*close the (?:django )?CMS (modal|sideframe)$/, async function (pronounCase, overlayWord) {
+When(/^(I |we )*close the CMS (modal|sideframe)$/, async function (pronounCase, overlayWord) {
   const kind = overlayKind(overlayWord);
   if (kind === 'modal') {
     if (!(await isModalOpen(this))) throw explain({ message: 'The CMS modal is not open.', hint: OVERLAYS.modal.hint });
