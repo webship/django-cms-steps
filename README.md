@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/webship/django-cms-steps/2.0.x/assets/logo.png" alt="django CMS logo" width="96"></p>
+
 # django-cms-steps
 
 Step definitions for testing [django CMS](https://www.django-cms.org/) sites
@@ -270,3 +272,7 @@ npm run site:seed  && npm test                             # everything else, on
 ## License
 
 [MIT](LICENSE) © Webship.co
+
+## Logo
+
+The django CMS logo in this README is the favicon of the django CMS repository (`cms/static/cms/img/favicon.png`) and belongs to the django CMS project. The django CMS name and logo are trademarks of their owner; this pack is not affiliated with or endorsed by them.
