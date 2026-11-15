@@ -113,10 +113,10 @@ failure is a short message with a hint that names what the page really shows.
 | Step | Type |
 | --- | --- |
 | `I am a logged in user with the "<handle>" user` | Given |
-| `I am not logged in` | Given |
-| `I am on the login page` | Given |
 | `I log in as "<username>" with password "<password>"` (tests the form; asserts nothing) | When |
 | `I log out` | When |
+| `I am not logged in` | Given |
+| `I am on the login page` | Given |
 | `I should( not) be logged in` | Then |
 | `I should( not) see the login form` | Then |
 | `I should( not) see a login error( "<text>")` | Then |
