@@ -14,6 +14,14 @@ Feature: Log in and log out
     Then we should be logged in
     And we should see the CMS toolbar
 
+  Scenario: A second account logs in while another one is logged in
+    Given I am a logged in user with the "admin" user
+    Then I should be allowed to open "/en/admin/auth/user/"
+    Given I am a logged in user with the "editor" user
+    Then I should be logged in
+    And I should see the CMS toolbar
+    But I should not be allowed to open "/en/admin/auth/user/"
+
   Scenario: An anonymous visitor does not see the CMS toolbar
     Given I am not logged in
     When I go to the homepage

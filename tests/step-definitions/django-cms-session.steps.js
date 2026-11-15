@@ -25,7 +25,23 @@ const LOGIN_HINT = 'The Django admin login form (`#login-form` with `#id_usernam
 /** Fill the admin login form and submit it; the caller checks the outcome. */
 async function submitLogin(world, username, password, next) {
   const page = world.page;
-  await gotoUrl(page, adminUrl(world, `login/?next=${encodeURIComponent(next)}`));
+  const loginUrl = adminUrl(world, `login/?next=${encodeURIComponent(next)}`);
+  await gotoUrl(page, loginUrl);
+  // The admin sends a staff session away from its login form (to the admin
+  // index), so with somebody logged in there is no form to fill: log that
+  // account out first, the way the admin itself does, and open the form again.
+  if (!(await page.locator(SELECTORS.loginForm).count())) {
+    const adminLogout = page.locator('#logout-form button, #logout-form [type="submit"]').first();
+    if (await adminLogout.count()) {
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),
+        adminLogout.click(),
+      ]);
+    } else {
+      await world.context.clearCookies();
+    }
+    await gotoUrl(page, loginUrl);
+  }
   await actOrExplain('log in as', username, async () => {
     await page.locator(SELECTORS.loginUsername).waitFor({ state: 'visible', timeout: budget(world) });
     await page.fill(SELECTORS.loginUsername, username);
@@ -49,7 +65,9 @@ async function isStaffSession(world) {
  * registry in cucumber.js (worldParameters.users: `{ <handle>: { username,
  * password } }`), so no credential lives in a feature file. The step lands on
  * the front page, where the CMS toolbar shows, and fails with the form's own
- * message when the site rejects the credentials.
+ * message when the site rejects the credentials. When another account is
+ * logged in, the step logs it out first, so a scenario can change accounts
+ * without a "log out" step in between.
  *
  * Example #1: Given I am a logged in user with the "admin" user
  * Example #2: Given we are a logged in user with the username "editor"
