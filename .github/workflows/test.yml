@@ -38,6 +38,11 @@ jobs:
       - name: Check the examples and the feature steps against the step regexes
         run: npm run test:examples
 
+
+      - name: Check that a feature named on the command line runs alone
+
+        run: npm run test:paths
+
       - name: Load every step and feature without a browser
         run: npm run test:dry-run
 
