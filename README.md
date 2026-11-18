@@ -100,6 +100,24 @@ All keys are optional.
 The toolbar, the modal, the sideframe, the structure board and the page tree
 are django CMS's own markup and need no configuration.
 
+## Test users
+
+The accounts this repository's suite logs in with, exactly as `cucumber.js`
+lists them in `worldParameters.users` (the default values;
+`DJANGOCMS_<HANDLE>_USER` and `DJANGOCMS_<HANDLE>_PASS` replace them).
+[`site/scripts/accounts.py`](site/scripts/accounts.py) creates them on the
+local test site of [`site/`](site/README.md) when it starts, and CI does the
+same on the runner: `admin` is a superuser, `editor` is staff in the
+"Editors" group. They are placeholder credentials of that throwaway site, not
+of any real one.
+
+```json
+{
+  "admin": { "username": "admin", "password": "admin" },
+  "editor": { "username": "editor", "password": "editor" }
+}
+```
+
 ## Steps
 
 Every Then step takes `should` or `should not`. Every step takes `I`, `we` or
