@@ -52,9 +52,9 @@ def seed():
         old.delete()
     Page.objects.all().delete()
 
-    home = page("Home", "<p>Welcome to the django CMS test site.</p>")
+    home = page("Home", "<p>Welcome to the test site.</p>")
     home.set_as_homepage()
-    translate(home, "Startseite", "<p>Willkommen auf der django CMS Testseite.</p>")
+    translate(home, "Startseite", "<p>Willkommen auf der Testseite.</p>")
 
     about = page("About", "<p>About this site.</p>")
     translate(about, "Über uns", "<p>Über diese Website.</p>")

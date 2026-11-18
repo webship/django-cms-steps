@@ -30,7 +30,7 @@ Feature: Languages
     Given I am not logged in
     When I go to "/de/"
     Then the page language should be "de"
-    And I should see "Willkommen auf der django CMS Testseite."
+    And I should see "Willkommen auf der Testseite."
     And the breadcrumb should contain "Startseite"
 
   Scenario: A page that is not translated is not served in the other language
