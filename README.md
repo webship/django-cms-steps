@@ -19,6 +19,149 @@ django CMS 5.1 from the django CMS quickstart, with djangocms-versioning 2.8,
 djangocms-alias 3.2, djangocms-text 1.0 and djangocms-frontend 2.5, on Django
 5.2 (Python 3.11) and Django 6.1 (the Python of the CI image).
 
+## From nothing to a green run
+
+What the machine needs: Docker, [DDEV](https://ddev.com), git, curl, and
+Node.js 20 or later with npm. Python and the site run in DDEV's web
+container.
+
+**1. The site.** The repository's own DDEV project (the one CI starts) builds
+the site from the django CMS quickstart on its first start: django CMS 5.1
+with djangocms-versioning, djangocms-alias, djangocms-text,
+djangocms-frontend and django-filer, two languages, and the accounts of
+[Test users](#test-users). The first start takes from a minute to a few; then the seed
+script puts in the pages the features expect (Home, About > Team, Contact,
+Draft notes).
+
+```bash
+git clone https://github.com/webship/django-cms-steps.git
+cd django-cms-steps/site
+ddev start
+until curl -fsk -o /dev/null https://django-cms-steps.ddev.site/en/admin/login/; do sleep 5; done
+ddev exec 'bash scripts/manage.sh shell < scripts/seed.py'
+cd ../..
+```
+
+The site answers at `https://django-cms-steps.ddev.site` and its admin at
+`https://django-cms-steps.ddev.site/en/admin/`.
+
+**2. A test project.**
+
+```bash
+mkdir django-cms-tests && cd django-cms-tests
+npm init -y
+npm install --save-dev webship-js @webship-js/django-cms-steps
+npx init-webship-js
+```
+
+`npx init-webship-js` writes `cucumber.js`, `playwright.config.ts`, the
+`tests/` folders with a first feature and the `npm test` scripts, and installs
+Chromium. npm usually runs it already when it installs webship-js; a second
+run changes nothing.
+
+**3. `cucumber.js`.** Replace the file with the wiring of the pack: the step
+files of webship-js and of the pack, the address of the site, the language of
+its admin and the accounts (the JSON of [Test users](#test-users)).
+
+```javascript
+module.exports = {
+  default: {
+    requireModule: ['tsx/cjs'],
+    require: [
+      'node_modules/webship-js/tests/step-definitions/**/*.js',
+      'node_modules/@webship-js/django-cms-steps/tests/step-definitions/*.steps.js',
+      'tests/step-definitions/**/*.js',
+    ],
+    paths: ['tests/features/**/*.feature'],
+    format: ['@cucumber/pretty-formatter', 'json:tests/reports/cucumber_report.json'],
+    worldParameters: {
+      launchUrl: process.env.LAUNCH_URL || 'https://django-cms-steps.ddev.site',
+      djangoCms: { adminLanguage: 'en' },
+      // The waits webship-js adds around each page, scenario and step (milliseconds).
+      minWaitTime: { page: 3000, before_scenario: 0, after_scenario: 0, before_step: 0, after_step: 0 },
+      users: {
+        "admin": { "username": "admin", "password": "admin" },
+        "editor": { "username": "editor", "password": "editor" }
+      },
+    },
+  },
+};
+```
+
+**4. A first feature**, `tests/features/first-run.feature`:
+
+```gherkin
+Feature: First run
+  Scenario: An editor logs in and sees the CMS toolbar
+    Given I am a logged in user with the "editor" user
+    Then I should be logged in
+    And I should see the CMS toolbar
+
+  Scenario: A visitor follows the menu to a page
+    Given I am not logged in
+    When I go to the homepage
+    And I click "Contact" in the navigation menu
+    Then I should see "How to reach us."
+```
+
+**5. Run it.**
+
+```bash
+npm test
+```
+
+A green first run prints every step, then the summary (the starter feature of
+`npx init-webship-js` and the two scenarios above, passed) and the HTML report
+it wrote:
+
+```
+3 scenarios (3 passed)
+9 steps (9 passed)
+0m04.866s (executing steps: 0m04.834s)
+[webship-js] HTML report → …/django-cms-tests/tests/reports/cucumber_report.html
+```
+
+From there, copy the features of [`tests/features/`](tests/features/) (they
+also ship in the package, under
+`node_modules/@webship-js/django-cms-steps/tests/features/`): together they
+use every step of the pack. They expect the content of the seed script; the
+welcome screen feature (`@empty-site`) needs a site with no page at all:
+`ddev exec 'bash scripts/manage.sh shell < scripts/empty.py'` in `site/`, the
+lane, then the seed again.
+
+### What the suite tests
+
+The features of this repository run every step of the pack against the test
+site, and CI runs them on every change: logging in through the admin's login
+form by a handle of the users registry (the administrator and the editor), a
+second account taking over, a wrong password refused, logging out from the
+toolbar and from the admin, an anonymous visitor sent to the login form; the
+toolbar (its menus, its buttons, the CMS modal and the sideframe with the page
+tree, the users and the administration), the version it reports; the create
+wizard (what it offers, step by step, a page with a first text in one step, a
+sub page); building a page from text plugins in the structure board, editing
+and deleting plugins; versions (a draft published, a new draft, unpublished,
+a page a visitor sees only while it is published); the page tree (the exact
+titles, the state and place of each page, the settings form, publishing,
+unpublishing, moving and deleting); users, groups and permissions (an editor
+in the Editors group, refused the accounts, the administration it is offered);
+two languages (the chooser, switching a page, the German home page, a page
+not translated, a translation added from the toolbar); the navigation menu and
+the breadcrumb; the page-not-found page; the welcome screen of a site with no
+page (a lane of its own, before the content is seeded); and the accessibility
+audits of the front page, a content page and the login page.
+
+Not tested: other editors than djangocms-text, djangocms-frontend's grid and
+component plugins, aliases and static aliases beyond the wizard's offer,
+django-filer's files and folders, moderation and the version comparison of
+djangocms-versioning, page permissions per page, several sites, the
+scheduling of publication, the search, and other Django apps (blogs, news).
+What a run leaves on the site: the history of admin actions the platform
+keeps (about 26 entries a run) and the sessions of its logins; the pages,
+their versions and plugins, the users and the groups are as before. The
+welcome screen lane needs the site without pages and the seed again after
+it.
+
 ## Install
 
 ```bash
@@ -36,7 +179,7 @@ after webship-js's own, and name the accounts your features log in with:
 // cucumber.js
 module.exports = {
   default: {
-    requireModule: ['ts-node/register'],
+    requireModule: ['tsx/cjs'],
     require: [
       'node_modules/webship-js/tests/step-definitions/**/*.js',
       'node_modules/@webship-js/django-cms-steps/tests/step-definitions/*.steps.js',
