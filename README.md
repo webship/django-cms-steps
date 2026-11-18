@@ -259,6 +259,11 @@ npm run site:seed  && npm test                             # everything else, on
 - `npm run test:examples` checks that every `Example #n:` line matches its own
   step and no other, and that every feature step is defined exactly once.
 - `npm run test:dry-run` loads every step and feature without a browser.
+- `npm run test:paths` checks that a feature or a scenario named on the command
+  line runs alone: `npx cucumber-js tests/features/session.feature` runs one
+  feature and `npx cucumber-js tests/features/session.feature:<line>` one
+  scenario (the line of its `Scenario:`); the paths of `cucumber.js` are left
+  out when the command line names any.
 - `FEATURES=tests/features/a.feature,tests/features/b.feature npm test` runs a
   subset; `CUCUMBER_TAGS=@tag npm test` runs a lane. The default run leaves
   `@wip` and `@empty-site` out.

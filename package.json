@@ -16,6 +16,7 @@
     "test:firefox": "BROWSER=firefox cucumber-js --config cucumber.js",
     "test:webkit": "BROWSER=webkit cucumber-js --config cucumber.js",
     "test:examples": "node scripts/check-examples.js",
+    "test:paths": "node scripts/check-paths.js",
     "test:dry-run": "cucumber-js --config cucumber.js --dry-run",
     "site:start": "cd ${SITE_DIR:-site} && ddev start",
     "site:stop": "cd ${SITE_DIR:-site} && ddev stop",
