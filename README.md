@@ -45,6 +45,25 @@ cd ../..
 The site answers at `https://django-cms-steps.ddev.site` and its admin at
 `https://django-cms-steps.ddev.site/en/admin/`.
 
+In the [Webship Workspace](https://github.com/webship/workspace), its django
+CMS plugin builds a site too, in a sites folder of the workspace (`test/` here;
+`dev/`, `sandboxes/` and `demos/` work the same):
+
+```bash
+bash core/scripts/plugins.sh --require django-cms --with-needs
+bash core/scripts/plugins.sh --activate django-cms --with-needs
+bash core/scripts/plugins.sh --install django-cms
+bash test/cmd-django-cms-project.sh mysite --install --add-users
+```
+
+That site answers at `https://mysite.ddev.site`, with the plugin's accounts
+(`administrator` and `editor`, each with the password `dD.123123ddd`; step 3
+names them). It is the quickstart site with one language and no page yet, and
+the seed above expects the site of step 1 (its `admin` account, a second
+language): there, the first scenario of the first feature passes, while the
+second and the features of [`tests/features/`](tests/features/) need the
+seeded pages of the site of step 1.
+
 **2. A test project.**
 
 ```bash
@@ -88,6 +107,11 @@ module.exports = {
 };
 ```
 
+On a site from the Webship Workspace (step 1), the accounts are the plugin's:
+`"admin": { "username": "administrator", "password": "dD.123123ddd" }` and
+`"editor": { "username": "editor", "password": "dD.123123ddd" }`. Its address goes in
+`LAUNCH_URL` (step 5).
+
 **4. A first feature**, `tests/features/first-run.feature`:
 
 ```gherkin
@@ -110,6 +134,7 @@ Feature: First run
 npm test
 ```
 
+(`LAUNCH_URL=https://mysite.ddev.site npm test` for a site at another address.)
 A green first run prints every step, then the summary (the starter feature of
 `npx init-webship-js` and the two scenarios above, passed) and the HTML report
 it wrote:
