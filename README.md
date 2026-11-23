@@ -22,7 +22,7 @@ djangocms-alias 3.2, djangocms-text 1.0 and djangocms-frontend 2.5, on Django
 ## From nothing to a green run
 
 What the machine needs: Docker, [DDEV](https://ddev.com), git, curl, and
-Node.js 20 or later with npm. Python and the site run in DDEV's web
+Node.js 24 or later with npm. Python and the site run in DDEV's web
 container.
 
 **1. The site.** The repository's own DDEV project (the one CI starts) builds
